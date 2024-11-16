@@ -1,0 +1,10 @@
+{
+    "editor.formatOnSave": true,
+    "eslint.useESLintClass": true,
+    "eslint.enable": true,
+    "eslint.run": "onSave",
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "never",
+        "source.fixAll.eslint": "always"
+    }
+}
