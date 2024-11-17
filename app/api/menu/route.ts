@@ -20,7 +20,10 @@ export async function GET(req: NextRequest) {
     const available = searchParams.get('available')
 
     // 필터 조건 생성
-    const matchConditions: any = {}
+    type MatchConditions = {
+      available?: boolean
+    }
+    const matchConditions: MatchConditions = {}
     if (available !== null) {
       matchConditions.available = available === 'true' // true로 변환
     }
