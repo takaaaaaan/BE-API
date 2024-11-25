@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     // 필수 데이터 유효성 검사
     if (!id || (!name && price === undefined && available === undefined)) {
       return NextResponse.json(
-        { message: '유효하지 않은 요청입니다. id 및 업데이트할 데이터를 포함해야 합니다.', flg: false },
+        { message: '유효하지 않은 요청입니다. id 및 업데이트할 데이터를 포함해야 합니다.', success: false },
         { status: 400 }
       )
     }
@@ -40,17 +40,17 @@ export async function POST(req: NextRequest) {
     )
 
     if (!updatedMenuItem) {
-      return NextResponse.json({ message: '메뉴 아이템을 찾을 수 없습니다.', flg: false }, { status: 404 })
+      return NextResponse.json({ message: '메뉴 아이템을 찾을 수 없습니다.', success: false }, { status: 404 })
     }
 
     return NextResponse.json({
       message: '메뉴 아이템이 성공적으로 업데이트되었습니다.',
-      flg: true,
+      success: true,
       updatedMenuItem,
     })
   } catch (error: unknown) {
     // 예외 처리
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json({ message: '메뉴 업데이트 실패', flg: false, error: errorMessage }, { status: 500 })
+    return NextResponse.json({ message: '메뉴 업데이트 실패', success: false, error: errorMessage }, { status: 500 })
   }
 }

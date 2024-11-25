@@ -65,6 +65,6 @@ export async function GET(req: NextRequest) {
   } catch (error: unknown) {
     // 예외 처리
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json({ message: '사용자 확인 실패', flg: false, error: errorMessage }, { status: 500 })
+    return NextResponse.json({ message: '사용자 확인 실패', success: false, error: errorMessage }, { status: 500 })
   }
 }
