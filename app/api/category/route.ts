@@ -1,24 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import dbConnect from '@/db/dbConnect'
-import { Category } from '@/db/models'
+import { Category, dbConnect } from '@/db/models'
 
 export async function GET() {
   try {
-    // MongoDBに接続
+    // MongoDB에 연결
     await dbConnect()
 
-    // Categoryコレクションの全データを取得
+    // Category 컬렉션의 모든 데이터 가져오기
     const categories = await Category.find()
 
     if (!categories || categories.length === 0) {
-      return NextResponse.json({ message: 'カテゴリーデータが存在しません', success: false }, { status: 404 })
+      return NextResponse.json({ message: '카테고리 데이터가 존재하지 않습니다.', success: false }, { status: 404 })
     }
     console.log('categories:', categories)
-    // データをレスポンスとして返す
+    // 데이터를 응답으로 반환
     return NextResponse.json(
       {
-        message: 'カテゴリーデータを取得しました',
+        message: '카테고리 데이터를 가져왔습니다.',
         success: true,
         data: categories,
       },
@@ -27,34 +26,35 @@ export async function GET() {
   } catch (error: unknown) {
     console.error('Error fetching categories:', error)
     return NextResponse.json(
-      { message: 'カテゴリーデータの取得に失敗しました', success: false, error },
+      { message: '카테고리 데이터를 가져오는 데 실패했습니다.', success: false, error },
       { status: 500 }
     )
   }
 }
+
 export async function PUT(req: NextRequest) {
   try {
-    // MongoDBに接続
+    // MongoDB에 연결
     await dbConnect()
 
-    // リクエストボディからデータを取得
+    // 요청 본문에서 데이터 가져오기
     const { _id, name } = await req.json()
 
     if (!_id || !name) {
-      return NextResponse.json({ message: '必要なデータが不足しています', success: false }, { status: 400 })
+      return NextResponse.json({ message: '필요한 데이터가 부족합니다.', success: false }, { status: 400 })
     }
 
-    // カテゴリーを検索して更新
+    // 카테고리를 검색하여 업데이트
     const updatedCategory = await Category.findByIdAndUpdate(_id, { name }, { new: true, runValidators: true })
 
     if (!updatedCategory) {
-      return NextResponse.json({ message: '指定されたカテゴリーが存在しません', success: false }, { status: 404 })
+      return NextResponse.json({ message: '지정된 카테고리가 존재하지 않습니다.', success: false }, { status: 404 })
     }
 
-    // 更新されたデータを返す
+    // 업데이트된 데이터를 반환
     return NextResponse.json(
       {
-        message: 'カテゴリーを更新しました',
+        message: '카테고리를 업데이트했습니다.',
         success: true,
         data: updatedCategory,
       },
@@ -62,6 +62,9 @@ export async function PUT(req: NextRequest) {
     )
   } catch (error: unknown) {
     console.error('Error updating category:', error)
-    return NextResponse.json({ message: 'カテゴリーの更新に失敗しました', success: false, error }, { status: 500 })
+    return NextResponse.json(
+      { message: '카테고리를 업데이트하는 데 실패했습니다.', success: false, error },
+      { status: 500 }
+    )
   }
 }

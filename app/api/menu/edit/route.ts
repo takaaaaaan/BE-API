@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import dbConnect from '@/db/dbConnect'
-import { MenuItem } from '@/db/models'
+import { dbConnect, MenuItem } from '@/db/models'
 
 /**
  * 메뉴 아이템 업데이트

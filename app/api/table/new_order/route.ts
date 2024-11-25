@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import dbConnect from '@/db/dbConnect'
-import { Order, Table } from '@/db/models'
+import { dbConnect, Order, Table } from '@/db/models'
 
 export async function POST(req: NextRequest) {
   try {

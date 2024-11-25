@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import dbConnect from '@/db/dbConnect'
-import Table from '@/db/models/table'
+import { dbConnect, Table } from '@/db/models'
 
 export async function GET(req: NextRequest) {
   try {
