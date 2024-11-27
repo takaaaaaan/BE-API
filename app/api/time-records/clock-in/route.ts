@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
 
     // User 컬렉션에 기록 ID를 추가
     await User.findByIdAndUpdate(userId, {
-      $push: { time_records_id: timeRecord._id, clockingin: true },
+      $push: { time_records_id: timeRecord._id }, // 配列に追加
+      $set: { clockingin: true }, // bool 型として直接設定
     })
 
     return NextResponse.json({ message: '출근 기록이 생성되었습니다', success: true, timeRecord }, { status: 201 })
