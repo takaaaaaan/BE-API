@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { dbConnect, User } from '@/db/models'
+import { dbConnect, TimeRecord } from '@/db/models'
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,36 +15,32 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: 'user_id를 지정해주세요.', success: false }, { status: 400 })
     }
 
-    // 사용자 정보 가져오기
-    const userWithRecords = await User.findById(userId).populate({
-      path: 'time_records_id',
-      match:
-        startDate && endDate
-          ? {
-              updatedAt: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate),
-              },
-            }
-          : {},
-    })
+    // 검색 조건 생성
+    const query: Record<string, any> = { user_id: userId } // 動的クエリ型
 
-    if (!userWithRecords) {
-      return NextResponse.json({ message: '지정된 사용자를 찾을 수 없습니다.', success: false }, { status: 404 })
+    if (startDate && endDate) {
+      query.updatedAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      }
+    }
+
+    // TimeRecord에서 user_id와 조건에 맞는 데이터 검색
+    const timeRecords = await TimeRecord.find(query, 'clock_in clock_out total_working_hours createdAt updatedAt')
+
+    if (!timeRecords || timeRecords.length === 0) {
+      return NextResponse.json({ message: '근무 기록을 찾을 수 없습니다.', success: false }, { status: 404 })
     }
 
     // 총 근무 시간 계산
-    const totalWorkingHours = (userWithRecords.time_records_id as { total_working_hours: number }[]).reduce(
-      (sum, record) => sum + (record.total_working_hours || 0),
-      0
-    )
+    const totalWorkingHours = timeRecords.reduce((sum, record) => sum + (record.total_working_hours || 0), 0)
 
     return NextResponse.json(
       {
         message: '근무 기록을 가져왔습니다.',
         success: true,
-        user: userWithRecords,
-        total_working_hours: totalWorkingHours, // 총 근무 시간을 추가
+        records: timeRecords,
+        total_working_hours: totalWorkingHours, // 총 근무 시간
       },
       { status: 200 }
     )
