@@ -21,13 +21,15 @@ export async function POST(req: NextRequest) {
       total_working_hours: 0,
     })
 
-    // User 컬렉션에 기록 ID를 추가
-    await User.findByIdAndUpdate(userId, {
-      $push: { time_records_id: timeRecord._id }, // 配列に追加
-      $set: { clockingin: true }, // bool 型として直接設定
+    // User 컬렉션에 기록 ID를 설정
+    const userdata = await User.findByIdAndUpdate(userId, {
+      $set: {
+        time_record_id: timeRecord._id, // 配列ではなく単一値として設定
+        clockingin: true, // 출근 상태 설정
+      },
     })
 
-    return NextResponse.json({ message: '출근 기록이 생성되었습니다', success: true, timeRecord }, { status: 201 })
+    return NextResponse.json({ message: '출근 기록이 생성되었습니다', success: true, userdata }, { status: 201 })
   } catch (error: unknown) {
     console.error('Error during clock-in:', error)
     return NextResponse.json({ message: '출근 기록 생성에 실패했습니다', success: false, error }, { status: 500 })
