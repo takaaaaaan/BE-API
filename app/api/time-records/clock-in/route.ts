@@ -13,6 +13,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'user_id를 지정해주세요', success: false }, { status: 400 })
     }
 
+    // User 컬렉션에서 user_id를 확인
+    const user = await User.findById(userId)
+    if (!user) {
+      return NextResponse.json(
+        { message: '지정된 user_id를 가진 사용자를 찾을 수 없습니다', success: false },
+        { status: 404 }
+      )
+    }
+
     // 출근 기록을 생성
     const timeRecord = await TimeRecord.create({
       user_id: userId,
@@ -24,7 +33,7 @@ export async function POST(req: NextRequest) {
     // User 컬렉션에 기록 ID를 설정
     const userdata = await User.findByIdAndUpdate(userId, {
       $set: {
-        time_record_id: timeRecord._id, // 配列ではなく単一値として設定
+        time_record_id: timeRecord._id, // 単一値として設定
         clockingin: true, // 출근 상태 설정
       },
     })
