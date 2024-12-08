@@ -1,3 +1,4 @@
+import { FilterQuery } from 'mongoose' // Mongoose の FilterQuery 型を使用
 import { NextRequest, NextResponse } from 'next/server'
 
 import { dbConnect, TimeRecord } from '@/db/models'
@@ -14,9 +15,7 @@ export async function GET(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ message: 'user_id를 지정해주세요.', success: false }, { status: 400 })
     }
-
-    // 검색 조건 생성
-    const query: Record<string, any> = { user_id: userId } // 動的クエリ型
+    const query: FilterQuery<typeof TimeRecord> = { user_id: userId } // 型安全なクエリ定義
 
     if (startDate && endDate) {
       query.updatedAt = {
